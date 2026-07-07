@@ -1,141 +1,100 @@
-﻿# 学习养成计划 V2（前端 + C++ 后端）
+﻿# 学习养成计划 V3（注册登录版）
 
-本版本是独立重写版本，不修改原来的 `web`、`fullstack`、`software` 文件夹。
-
-## 项目定位
-
-本项目最终呈现为一个前端 + 后端结构的学习养成计划软件。
-
-- 前端负责页面展示、用户交互和可视化。
-- 后端负责数据保存、任务管理、提醒规则和统计分析。
-- 数据保存在后端生成的 `study_tasks_v2.txt` 文件中。
+本版本是在 V2 前端 + C++ 后端基础上重新设计的 V3，新增用户注册、登录和按用户隔离任务功能。
 
 ## 技术栈
 
-1. C++：编写后端 HTTP 服务，处理任务数据和业务逻辑。
-2. HTML：编写网页结构。
-3. CSS：编写页面样式和响应式布局。
-4. JavaScript：编写前端交互逻辑，调用后端接口并渲染页面。
-5. WinSock：C++ 后端使用 Windows 网络接口实现本地 HTTP 服务。
-6. 文本文件存储：使用 `.txt` 文件保存任务数据。
+- 后端：C++、WinSock、本地文本文件存储
+- 前端：HTML、CSS、JavaScript
+- 通信方式：HTTP 接口 + JSON
+- 运行环境：Windows + 浏览器
 
-## 使用的数据结构
+## 新增功能
 
-### C++ 后端
-
-1. `struct Task`
-
-用于表示一个学习任务，包含任务编号、名称、主题、截止时间、优先级、复习提醒、完成状态、创建日期、完成日期、预计时长和备注。
-
-2. `struct Recommendation`
-
-用于表示系统推荐任务。
-
-3. `vector<Task>`
-
-用于保存所有任务，支持遍历、添加、删除和统计。
-
-4. `vector<Recommendation>`
-
-用于保存系统推荐任务。
-
-5. `map<string, pair<int, int>>`
-
-用于按日期和主题统计任务数量、完成数量和完成率。
-
-6. `map<int, int>`
-
-用于统计不同优先级任务数量。
-
-7. `map<string, int>`
-
-用于统计每天的打卡次数，生成打卡日历。
-
-### JavaScript 前端
-
-1. `Array`
-
-用于保存从后端获取的任务列表、推荐任务列表、每日统计和主题统计。
-
-2. `Object`
-
-用于表示任务、统计数据、接口地址等结构化数据。
-
-3. `Map`
-
-用于前端生成打卡日历时按日期快速查找打卡次数。
-
-4. DOM 节点集合
-
-用于批量处理导航按钮、筛选按钮和页面视图切换。
+1. 用户注册：用户输入用户名、显示名称和密码。
+2. 用户登录：用户输入用户名和密码后进入系统。
+3. 退出登录：清除浏览器保存的当前登录用户。
+4. 用户数据隔离：A 用户看不到 B 用户的任务。
+5. 用户文件保存：用户保存到 `users_v3.txt`。
+6. 任务文件保存：任务保存到 `study_tasks_v3.txt`，任务中增加 username 字段。
 
 ## 项目结构
 
 ```text
-fullstack_v2/
+fullstack_v3/
   backend/
     server.cpp
     server.exe
-    study_tasks_v2.txt
+    users_v3.txt
+    study_tasks_v3.txt
   frontend/
     index.html
     styles.css
     app.js
   docs/
-    TEST_CASES.md
-    TEST_REPORT.md
-    DEFECT_TRACKING.md
-  README.md
+  .vscode/
+  compile_backend.bat
+  run_backend.bat
 ```
 
 ## 运行方式
 
-进入 `backend` 文件夹，运行：
+最简单方式：双击 `run_backend.bat`。
+
+或命令行运行：
 
 ```powershell
+cd "D:\Yiqian_Yang _Homework_c++\project\fullstack_v3\backend"
 .\server.exe
 ```
 
-然后浏览器打开：
+浏览器打开：
 
 ```text
 http://localhost:8090
 ```
 
-如果需要重新编译后端：
+## 编译方式
 
 ```powershell
-g++ server.cpp -std=c++17 -lws2_32 -o server.exe
+g++ server.cpp -std=c++17 -finput-charset=UTF-8 -fexec-charset=UTF-8 -static -static-libgcc -static-libstdc++ -o server.exe -lws2_32
 ```
 
-## 功能说明
+## 主要接口
 
-1. 添加学习任务：输入任务名称、主题、截止日期、截止时间、优先级、预计时长、备注和是否复习提醒。
-2. 系统推荐任务：由后端提供推荐任务，前端点击后自动填入表单。
-3. 任务管理：支持查看、筛选、打卡和删除任务。
-4. 提醒功能：后端根据任务截止时间、优先级和复习规则生成提醒。
-5. 打卡记录：任务完成后保存完成日期，并在打卡表和日历中展示。
-6. 数据分析：统计总任务数、完成数、完成率、预计学习时长、每日完成率和主题完成率。
-7. 可视化展示：使用指标卡、进度条、日历、统计卡片展示学习情况。
+| 接口 | 方法 | 作用 |
+|---|---|---|
+| /api/register | POST | 注册用户 |
+| /api/login | POST | 登录用户 |
+| /api/tasks?username=xxx | GET | 获取当前用户任务 |
+| /api/tasks | POST | 添加当前用户任务 |
+| /api/tasks/{id}/complete?username=xxx | POST | 完成当前用户任务 |
+| /api/tasks/{id}/delete?username=xxx | POST | 删除当前用户任务 |
+| /api/stats?username=xxx | GET | 获取当前用户统计 |
+| /api/reminders?username=xxx | GET | 获取当前用户提醒 |
+| /api/recommendations | GET | 获取系统推荐任务 |
+| /api/demo/reset?username=xxx | POST | 生成当前用户演示数据 |
 
-## 前端和后端的关系
+## 使用的数据结构
 
-前端不直接保存任务数据。用户在网页上点击按钮后，JavaScript 会通过 HTTP 请求访问 C++ 后端接口。后端处理数据后返回 JSON，前端再根据返回结果更新页面。
+### C++ 后端
 
-例如：
+- `struct User`：保存用户账号、密码、显示名称、注册日期。
+- `struct Task`：保存任务数据，新增 `username` 字段用于区分用户。
+- `struct Recommendation`：保存系统推荐任务。
+- `vector<User>`：保存全部用户。
+- `vector<Task>`：保存全部任务。
+- `map<string, pair<int,int>>`：按日期和主题统计。
+- `map<int,int>`：按优先级统计。
+- `map<string,int>`：按打卡日期统计。
 
-- 前端添加任务：`POST /api/tasks`
-- 后端保存任务：写入 `study_tasks_v2.txt`
-- 前端刷新任务列表：`GET /api/tasks`
-- 后端返回 JSON：任务数组
+### JavaScript 前端
 
-## 接口列表
+- `Object`：保存接口地址、当前用户、统计对象。
+- `Array`：保存任务列表、推荐任务、统计列表。
+- `Map`：生成打卡日历时按日期快速查找。
+- DOM 节点集合：控制页面显示和事件绑定。
 
-- `GET /api/tasks`：获取任务列表。
-- `GET /api/recommendations`：获取系统推荐任务。
-- `GET /api/reminders`：获取提醒信息。
-- `GET /api/stats`：获取统计分析数据。
-- `POST /api/tasks`：添加任务。
-- `POST /api/tasks/{id}/complete`：完成任务并打卡。
-- `POST /api/tasks/{id}/delete`：删除任务。
-- `POST /api/demo/reset`：生成演示数据。
+## 说明
+
+本项目是课程作业级前后端项目，不使用数据库和加密库。密码以文本形式保存，方便学习理解，不适合作为真实系统直接使用。
