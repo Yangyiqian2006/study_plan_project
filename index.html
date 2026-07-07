@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>学习养成计划 V2</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">学</div>
+        <div>
+          <h1>学习养成计划</h1>
+          <p>C++ 后端驱动</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="dashboard">总览</button>
+        <button class="nav-item" data-view="tasks">任务</button>
+        <button class="nav-item" data-view="records">打卡</button>
+        <button class="nav-item" data-view="analysis">分析</button>
+      </nav>
+      <section class="side-card">
+        <div class="side-title">今日提醒</div>
+        <div id="reminderList" class="reminder-list"></div>
+      </section>
+      <section class="side-card compact">
+        <div class="side-title">连接状态</div>
+        <p id="serverState" class="server-state">正在连接 C++ 后端...</p>
+      </section>
+    </aside>
+
+    <main class="main">
+      <header class="hero">
+        <div>
+          <p id="todayLabel" class="subtle"></p>
+          <h2 id="pageTitle">学习总览</h2>
+        </div>
+        <div class="hero-actions">
+          <button id="resetDemoBtn" class="ghost-btn">生成演示数据</button>
+          <button id="refreshBtn" class="primary-btn">刷新</button>
+        </div>
+      </header>
+
+      <section class="metric-grid">
+        <article class="metric-card accent-blue"><span>总任务</span><strong id="totalCount">0</strong><small>后端任务总数</small></article>
+        <article class="metric-card accent-green"><span>已完成</span><strong id="doneCount">0</strong><small>已打卡任务</small></article>
+        <article class="metric-card accent-orange"><span>完成率</span><strong id="rateCount">0%</strong><small>自动统计</small></article>
+        <article class="metric-card accent-purple"><span>预计时长</span><strong id="minuteCount">0</strong><small>分钟</small></article>
+      </section>
+
+      <section id="dashboardView" class="view active">
+        <div class="dashboard-grid">
+          <section class="panel large-panel">
+            <div class="panel-head"><h3>整体进度</h3><span id="progressHint" class="subtle"></span></div>
+            <div class="big-progress"><div id="mainProgress"></div></div>
+            <div id="priorityBars" class="mini-bars"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><h3>快捷添加</h3><span class="subtle">推荐任务</span></div>
+            <div id="recommendList" class="recommend-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="tasksView" class="view">
+        <div class="editor-grid">
+          <form id="taskForm" class="panel form-panel">
+            <div class="panel-head"><h3>添加学习任务</h3><span class="subtle">提交给 C++ 后端</span></div>
+            <label>任务名称<input id="titleInput" required placeholder="例如：复习 C++ 结构体" /></label>
+            <label>学习主题<input id="topicInput" required placeholder="例如：C++ / 数据结构 / 英语" /></label>
+            <div class="two-col">
+              <label>完成日期<input id="dateInput" type="date" required /></label>
+              <label>完成时间<input id="timeInput" type="time" required /></label>
+            </div>
+            <div class="two-col">
+              <label>优先级<select id="priorityInput"><option value="3">高</option><option value="2" selected>中</option><option value="1">低</option></select></label>
+              <label>预计时长<input id="minuteInput" type="number" min="5" max="600" value="30" /></label>
+            </div>
+            <label>备注<textarea id="noteInput" rows="3" placeholder="可以写学习目标或复习重点"></textarea></label>
+            <label class="check-row"><input id="reviewInput" type="checkbox" />需要复习提醒</label>
+            <button class="primary-btn" type="submit">添加任务</button>
+          </form>
+          <section class="panel">
+            <div class="panel-head"><h3>任务筛选</h3><span class="subtle">前端显示过滤</span></div>
+            <div class="filter-row">
+              <button class="filter active" data-filter="all">全部</button>
+              <button class="filter" data-filter="todo">未完成</button>
+              <button class="filter" data-filter="done">已完成</button>
+              <button class="filter" data-filter="high">高优先级</button>
+            </div>
+            <div id="taskList" class="task-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="recordsView" class="view">
+        <div class="records-grid">
+          <section class="panel">
+            <div class="panel-head"><h3>打卡日历</h3><input id="monthInput" type="month" /></div>
+            <div id="calendar" class="calendar"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><h3>打卡记录表</h3><span class="subtle">来自后端任务数据</span></div>
+            <div class="table-wrap"><table><thead><tr><th>日期</th><th>任务</th><th>主题</th><th>时长</th></tr></thead><tbody id="recordTable"></tbody></table></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="analysisView" class="view">
+        <div class="analysis-grid">
+          <section class="panel"><div class="panel-head"><h3>每日任务分析</h3><span class="subtle">添加数 / 完成率</span></div><div id="dailyStats" class="stat-list"></div></section>
+          <section class="panel"><div class="panel-head"><h3>主题完成情况</h3><span class="subtle">按主题统计</span></div><div id="topicStats" class="topic-list"></div></section>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>
